@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v4
     
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: '1.20'
     
@@ -30,7 +30,7 @@ jobs:
         go build -ldflags="-s -w" -o binder.exe cmd/binder/main.go
     
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: binder-windows
         path: binder.exe
