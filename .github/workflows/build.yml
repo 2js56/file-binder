@@ -1,0 +1,59 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+    
+    - name: Get dependencies
+      run: go mod download
+    
+    - name: Run tests
+      run: go test -v ./...
+    
+    - name: Build for Windows
+      run: |
+        go build -ldflags="-s -w" -o binder.exe cmd/binder/main.go
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: binder-windows
+        path: binder.exe
+    
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: binder.exe
+        body: |
+          ## File Binder Release
+          
+          ⚠️ **Educational Use Only** - This tool is for security research and educational purposes only.
+          
+          ### Features
+          - File binding with AES-GCM encryption
+          - Anti-detection techniques
+          - Dynamic path generation
+          - Silent execution
+          
+          ### Usage
+          ```
+          binder.exe -p payload.exe -f document.pdf
+          ```
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

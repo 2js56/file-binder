@@ -1,0 +1,1 @@
+go build -o binder.exe -ldflags="-s -w -X main.VERSION=0.0.1 -X main.CONTENT=免杀马捆绑器" -trimpath cmd\binder\main.go
